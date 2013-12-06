@@ -1,7 +1,19 @@
 import sys
 from time import sleep
 from gevent import socket, Timeout
-    
+
+
+params = {"X":
+              {"LEFT":1586321,
+               "RIGHT":32190298},
+          "Y":
+              {"FRONT":1424258,
+               "BACK":32098423},
+          "Z":
+              {"UP":-5283129,
+               "DOWN":-145183,
+               "COUNTperMM":171265}
+         }
 
 def axisAddress(axis):
     """Return the address of requested axis."""
@@ -21,9 +33,13 @@ def moveDipRetract(location, dip_speed, draw_speed, dwell_s):
     return
 # end def
 
-def retractZ(speed, position="UP"):
+def retractZ(position="UP", speed=500):
     """Retract or lower the Z axis.
-    Halts other functions until axis has reached destination."""
+    Halts other functions until axis has reached destination.
+
+    position = "UP" or "DOWN"
+    speed is in um/s. Regular speed = 500 mm/s
+                      Stretch speed = 0.3 mm/s"""
     address = axisAddress("z_axis")
 
     if position == "UP":
@@ -33,7 +49,10 @@ def retractZ(speed, position="UP"):
     else:
         raise ValueError("Invalid position {0}. Expected 'UP' or 'DOWN'".format(position))
 
-    messages = ["mo=1;", "pa={0};".format(count_location), "bg;"]
+    sp = int(speed*params["Z"]["COUNTperMM"])
+    # print "SP = {0}".format(sp)
+
+    messages = ["sp={0};".format(sp), "mo=1;", "pa={0};".format(count_location), "bg;"]
 
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, 0)
 
