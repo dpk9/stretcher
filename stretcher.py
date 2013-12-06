@@ -17,14 +17,14 @@ params = {"X":
 
 def axisAddress(axis):
     """Return the address of requested axis."""
-    if axis == "x_axis": 
+    if axis == "X": 
         address = ('192.168.1.151', 5001)
-    elif axis == "y_axis": 
+    elif axis == "Y": 
         address = ('192.168.1.153', 5001)
-    elif axis == "z_axis": 
+    elif axis == "Z": 
         address = ('192.168.1.49', 5001)
     else: 
-        raise ValueError("Invalid axis {0}. Expecting x_axis, y_axis, or z_axis.".format(axis))
+        raise ValueError("Invalid axis {0}. Expecting X, Y, or Z.".format(axis))
     return address
 # end def
 
@@ -40,7 +40,7 @@ def retractZ(position="UP", speed=500):
     position = "UP" or "DOWN"
     speed is in um/s. Regular speed = 500 mm/s
                       Stretch speed = 0.3 mm/s"""
-    address = axisAddress("z_axis")
+    address = axisAddress("Z")
 
     if position == "UP":
         count_location = -5283137
@@ -65,15 +65,15 @@ def retractZ(position="UP", speed=500):
     return
 # end def
 
-def moveToLocation(location):
+def moveToPosition(location, dip=True):
     """I. Retract Z axis
     II. Move XY axes to [123][ABC] location.
     III. Lower Z axis."""
 
-    retractZ(1)
+    retractZ()
 
 
-    axes = ["x_axis", "y_axis"]
+    axes = ["X", "Y"]
     count_location = locationInCounts(location)
 
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, 0)
@@ -88,14 +88,32 @@ def moveToLocation(location):
             print sendCommand(message, address, sock)
         i += 1
 
-    while isMotorMoving(axisAddress("x_axis"), sock) == True:
+    while isMotorMoving(axisAddress("X"), sock) == True:
         sleep(.2)
-    while isMotorMoving(axisAddress("y_axis"), sock) == True:
+    while isMotorMoving(axisAddress("Y"), sock) == True:
         sleep(.2)
 
     sock.close()
+    if dip == True:
+        retractZ("DOWN")
+    return
+# end def
 
-    retractZ(1, "DOWN")
+def moveToLoadPosition():
+    retractZ()
+    address = axisAddress("Y")
+    load_pos = params["Y"]["BACK"]
+    messages = ["mo=1;", "pa={0};".format(load_pos), "bg;"]
+
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, 0)
+
+    for message in messages:
+        print sendCommand(message, address, sock)
+
+    while isMotorMoving(axisAddress("Y"), sock) == True:
+        sleep(.2)
+
+    sock.close()
     return
 # end def
 
@@ -177,4 +195,15 @@ def locationInCounts(location):
     print y_pos
 
     return [x_pos, y_pos]
+# end def
+
+def unlock(axes):
+    axes = axes.upper()
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, 0)
+    for axis in axes:
+        message = "mo=0;"
+        address = axisAddress(axis)
+        sendCommand(message, address, sock)
+    sock.close()
+    return
 # end def
