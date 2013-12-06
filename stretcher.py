@@ -124,8 +124,10 @@ def isMotorMoving(address, sock):
     data = sendCommand("ms;", address, sock)
     if data == "ms;0;":
         return False
-    elif data == "ms;1;":
-        return False
+    # elif data == "ms;1;":
+    #     return False
+    elif data == "ms;3;":
+        raise IOError("Motor failed. Aborting.")
     else:
         return True
 
@@ -173,24 +175,26 @@ def sendCommand(message, address, sock=None):
 
 def locationInCounts(location):
     # X location
-    if location[1] == "A":
-        x_pos = 31799275
-    elif location[1] == "B":
-        x_pos = 20307120
-    elif location[1] == "C":
-        x_pos = 11748197
+    if location[1] == "1":
+        x_pos = 31317211
+    elif location[1] == "2":
+        x_pos = 21293790
+    elif location[1] == "3":
+        x_pos = 11489822
+    elif location[1] == "4":
+        x_pos = 1670066
     else:
-        raise ValueError("Invalid target location {0}. Expecting [1 2 3][A B C] e.g. '1A', '3C', etc.".format(location))
+        raise ValueError("Invalid target location {0}. Expecting [A B C][1 2 3] e.g. 'A1', 'C3', etc.".format(location))
 
     # Y location
-    if location[0] == "1":
-        y_pos = 10281472
-    elif location[0] == "2":
-        y_pos = 15849824
-    elif location[0] == "3":
-        y_pos = 21500258
+    if location[0] == "A":
+        y_pos = 10884550
+    elif location[0] == "B":
+        y_pos = 15607662
+    elif location[0] == "C":
+        y_pos = 20341775
     else:
-        raise ValueError("Invalid target location {0}. Expecting [1 2 3][A B C] e.g. '1A', '3C', etc.".format(location))
+        raise ValueError("Invalid target location {0}. Expecting [A B C][1 2 3] e.g. 'A1', 'C3', etc.".format(location))
     print x_pos
     print y_pos
 
@@ -202,6 +206,17 @@ def unlock(axes):
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, 0)
     for axis in axes:
         message = "mo=0;"
+        address = axisAddress(axis)
+        sendCommand(message, address, sock)
+    sock.close()
+    return
+# end def
+
+def lock(axes):
+    axes = axes.upper()
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, 0)
+    for axis in axes:
+        message = "mo=1;"
         address = axisAddress(axis)
         sendCommand(message, address, sock)
     sock.close()

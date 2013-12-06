@@ -7,11 +7,11 @@ python .\udpgoldwhistle.py yy 'mo=1;' 'pa=1075000000;' 'bg;'
 import sys
 from gevent import socket, Timeout
 
-if sys.argv[1] == 'xx':
+if sys.argv[1] == 'x':
     address = ('192.168.1.151', 5001)
-elif sys.argv[1] == 'yy':
+elif sys.argv[1] == 'y':
     address = ('192.168.1.153', 5001)
-elif sys.argv[1] == 'zz':
+elif sys.argv[1] == 'z':
     address = ('192.168.1.49', 5001)
 
 # elif sys.argv[1] == 'xl':
