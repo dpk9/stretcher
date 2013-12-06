@@ -1,7 +1,7 @@
 """Go all the way to the left side in one command:
-python .\udpgoldwhistle.py yy 'mo=1;' 'pa=1039000000;' 'bg;'
+python .\udpgoldwhistle.py y 'mo=1;' 'pa=1039000000;' 'bg;'
 or right
-python .\udpgoldwhistle.py yy 'mo=1;' 'pa=1075000000;' 'bg;'
+python .\udpgoldwhistle.py y 'mo=1;' 'pa=1075000000;' 'bg;'
 """
 
 import sys

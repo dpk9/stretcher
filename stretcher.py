@@ -10,9 +10,10 @@ params = {"X":
               {"FRONT":1424258,
                "BACK":32098423},
           "Z":
-              {"UP":-5283129,
-               "DOWN":-145183,
-               "COUNTperMM":171265}
+              {"UP":-5640977,
+               "DOWN":-1000,
+               "COUNTperMM":200000}
+               # "COUNTperMM":171265}
          }
 
 def axisAddress(axis):
@@ -28,8 +29,43 @@ def axisAddress(axis):
     return address
 # end def
 
-def moveDipRetract(location, dip_speed, draw_speed, dwell_s):
-    """Write this function."""
+def parseRecipe(file):
+    return
+# end def
+
+def moveDipDraw(location, dwell_s, draw_speed, dip_speed=500):
+    """
+    This is the main function.
+
+    Args:
+        location (str): Position to move to, "A1" to "C4."
+        dwell_s (float): Time to dwell in lowered position (s)
+        draw_speed (float): Speed to retract Z axis in (mm/s).
+        dip_speed (float): Speed to lower Z axis in (mm/s).
+
+    I. Retract Z axis.
+    II. Move to a "location".
+    III. Lower Z axis at "dip speed."
+    IV. Wait for "dwell_s" seconds.
+    V. Retract Z axis at "draw_speed."
+    """
+
+    # I.
+    retractZ()
+
+    # II.
+    moveToPosition(location, dip=False)
+
+    # III.
+    retractZ("DOWN", speed=dip_speed)
+
+    # IV.
+    dwell(dwell_s)
+
+    # V.
+    retractZ("UP", speed=draw_speed)
+
+
     return
 # end def
 
@@ -42,10 +78,9 @@ def retractZ(position="UP", speed=500):
                       Stretch speed = 0.3 mm/s"""
     address = axisAddress("Z")
 
-    if position == "UP":
-        count_location = -5283137
-    elif position == "DOWN":
-        count_location = -145195
+    position = position.upper()
+    if position == "UP" or position == "DOWN":
+        count_location = params["Z"][position]
     else:
         raise ValueError("Invalid position {0}. Expected 'UP' or 'DOWN'".format(position))
 
@@ -60,7 +95,7 @@ def retractZ(position="UP", speed=500):
         sendCommand(message, address, sock)
 
     while isMotorMoving(address, sock) == True:
-        sleep(.2)
+        dwell(.2)
 
     return
 # end def
@@ -89,9 +124,9 @@ def moveToPosition(location, dip=True):
         i += 1
 
     while isMotorMoving(axisAddress("X"), sock) == True:
-        sleep(.2)
+        dwell(.2)
     while isMotorMoving(axisAddress("Y"), sock) == True:
-        sleep(.2)
+        dwell(.2)
 
     sock.close()
     if dip == True:
@@ -111,11 +146,16 @@ def moveToLoadPosition():
         print sendCommand(message, address, sock)
 
     while isMotorMoving(axisAddress("Y"), sock) == True:
-        sleep(.2)
+        dwell(.2)
 
     sock.close()
     return
 # end def
+
+def dwell(dwell_s):
+    sleep(dwell_s)
+    return
+# end_def
 
 def isMotorMoving(address, sock):
     """Check motion status.
