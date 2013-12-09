@@ -31,6 +31,9 @@ beginning with # will be ignored.  For example:
 ```python
 # This line will be ignored
 
-moveDipDraw(location="A1", dwell_s=2, draw_speed=20, dip_speed=500)
+moveDipDraw(location="A1", dwell_s=20, draw_speed=.3, dip_speed=500)
 moveToLoadPosition()
 ```
+This recipe file will move to A1, lower the Z axis at max speed, wait 20
+seconds, and raise the Z axis at 300 um/s.  Then it will move to the load
+position.
