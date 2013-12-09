@@ -31,7 +31,14 @@ def axisAddress(axis):
 
 def runRecipe(infile):
     file = open(infile,'r')
-    for line in file.readlines():
+    lines = file.readlines()
+
+    # for line in lines:
+    #     fnc = line.split('(')[0]
+    #     print fnc
+    #     if not __dict__:
+    #         raise SyntaxError('stretcher.py has no attribute {0}.'.format(line))
+    for line in lines:
         print line
         exec(line)
     file.close()
