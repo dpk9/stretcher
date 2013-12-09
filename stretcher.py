@@ -186,7 +186,8 @@ def sendCommand(message, address, sock=None):
 
 
     # Socket must already be open
-    print message
+    if message != "ms;":
+        print message
     #sock.send(message)
     sock.sendto(message, address)
     # data, address = sock.recvfrom(8192)
@@ -209,7 +210,8 @@ def sendCommand(message, address, sock=None):
             msg_count += 1
     # print messages, semi_col_count, msg_count
     data = ''.join(messages)
-    print '%s:%s: got %s' % (address + (data, ))
+    if data != "ms;2;":
+        print '%s:%s: got %s' % (address + (data, ))
 
     if close_socket == True:
         sock.close()
@@ -267,3 +269,8 @@ def lock(axes):
     sock.close()
     return
 # end def
+
+if __name__ == "__main__":
+    import sys
+    file = sys.argv[1]
+    runRecipe(file)
