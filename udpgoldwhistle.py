@@ -13,25 +13,6 @@ elif sys.argv[1] == 'y':
     address = ('192.168.1.153', 5001)
 elif sys.argv[1] == 'z':
     address = ('192.168.1.49', 5001)
-
-# elif sys.argv[1] == 'xl':
-#     address = ('192.168.1.150', 5001)
-# elif sys.argv[1] == 'yl':
-#     address = ('192.168.1.151', 5001)
-# elif sys.argv[1] == 'xr':
-#     address = ('192.168.1.152', 5001)
-# elif sys.argv[1] == 'yr':
-#     address = ('192.168.1.153', 5001)
-
-# elif sys.argv[1] == 'z1':
-#     address = ('192.168.1.160', 5001)
-# elif sys.argv[1] == 'z2':
-#     address = ('192.168.1.161', 5001)
-# elif sys.argv[1] == 'z3':
-#     address = ('192.168.1.162', 5001)
-# elif sys.argv[1] == 'z4':
-#     address = ('192.168.1.163', 5001)
-
 else:
     print "Invalid axis"
     exit()

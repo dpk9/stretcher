@@ -1,0 +1,7 @@
+# sample recipe
+
+moveDipDraw(location="A1", dwell_s=5, draw_speed=1, dip_speed=500)
+moveDipDraw(location="B3", dwell_s=.1, draw_speed=10, dip_speed=500)
+moveDipDraw(location="A4", dwell_s=.5, draw_speed=5, dip_speed=500)
+moveDipDraw(location="C2", dwell_s=.5, draw_speed=500, dip_speed=500)
+moveToLoadPosition()

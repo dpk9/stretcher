@@ -29,7 +29,12 @@ def axisAddress(axis):
     return address
 # end def
 
-def parseRecipe(file):
+def runRecipe(infile):
+    file = open(infile,'r')
+    for line in file.readlines():
+        print line
+        exec(line)
+    file.close()
     return
 # end def
 
