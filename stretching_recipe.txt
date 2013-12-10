@@ -5,11 +5,13 @@
 # draw_speed {float}: z-axis raising speed in mm/s
 # dip_speed {float}: z-axis lowering speed in mm/s (defaults to 500)
 
+moveDipDraw(location="A1", dwell_s=60, draw_speed=.3)
+dwell(60)
+moveDipDraw(location="A2", dwell_s=15, draw_speed=500, cycles=4)
 
-moveDipDraw(location="A2", dwell_s=1, draw_speed=500, cycles=2)
+moveDipDraw(location="A3", dwell_s=300, draw_speed=500)
 
-moveDipDraw(location="B4", dwell_s=15, draw_speed=10)
 
-moveDipDraw(location="C1", dwell_s=1, dip_speed=5, draw_speed=2, cycles=2)
+moveDipDraw(location="A4", dwell_s=15, draw_speed=500, cycles=4)
 
 moveToLoadPosition()
