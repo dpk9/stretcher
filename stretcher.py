@@ -45,7 +45,7 @@ def runRecipe(infile):
     return
 # end def
 
-def moveDipDraw(location, dwell_s, draw_speed, dip_speed=500):
+def moveDipDraw(location, dwell_s, draw_speed, dip_speed=500, cycles=1):
     """
     This is the main function.
 
@@ -57,10 +57,12 @@ def moveDipDraw(location, dwell_s, draw_speed, dip_speed=500):
 
     I. Retract Z axis.
     II. Move to a "location".
-    III. Lower Z axis at "dip speed."
-    IV. Wait for "dwell_s" seconds.
-    V. Retract Z axis at "draw_speed."
+    for # of cycles:
+        III. Lower Z axis at "dip speed."
+        IV. Wait for "dwell_s" seconds.
+        V. Retract Z axis at "draw_speed."
     """
+    cycles_left = cycles
 
     # I.
     retractZ()
@@ -68,14 +70,19 @@ def moveDipDraw(location, dwell_s, draw_speed, dip_speed=500):
     # II.
     moveToPosition(location, dip=False)
 
-    # III.
-    retractZ("DOWN", speed=dip_speed)
+    while cycles_left > 0:
+        print "cycle {0} out of {1}.".format(cycles-cycles_left+1, cycles)
 
-    # IV.
-    dwell(dwell_s)
+        # III.
+        retractZ("DOWN", speed=dip_speed)
 
-    # V.
-    retractZ("UP", speed=draw_speed)
+        # IV.
+        dwell(dwell_s)
+
+        # V.
+        retractZ("UP", speed=draw_speed)
+
+        cycles_left -= 1
 
 
     return
@@ -129,10 +136,12 @@ def moveToPosition(location, dip=True):
         address = axisAddress(axis)
 
         messages = ["mo=1;", "pa={0};".format(count_location[i]), "bg;"]
-        print messages
+        # print messages
 
         for message in messages:
-            print sendCommand(message, address, sock)
+            data = sendCommand(message, address, sock)
+            # print data
+            
         i += 1
 
     while isMotorMoving(axisAddress("X"), sock) == True:
@@ -155,7 +164,8 @@ def moveToLoadPosition():
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, 0)
 
     for message in messages:
-        print sendCommand(message, address, sock)
+        data = sendCommand(message, address, sock)
+        # print data
 
     while isMotorMoving(axisAddress("Y"), sock) == True:
         dwell(.2)
@@ -193,8 +203,7 @@ def sendCommand(message, address, sock=None):
 
 
     # Socket must already be open
-    if message != "ms;":
-        print message
+    # print message
     #sock.send(message)
     sock.sendto(message, address)
     # data, address = sock.recvfrom(8192)
@@ -217,8 +226,7 @@ def sendCommand(message, address, sock=None):
             msg_count += 1
     # print messages, semi_col_count, msg_count
     data = ''.join(messages)
-    if data != "ms;2;":
-        print '%s:%s: got %s' % (address + (data, ))
+    # print '%s:%s: got %s' % (address + (data, ))
 
     if close_socket == True:
         sock.close()
@@ -249,8 +257,8 @@ def locationInCounts(location):
         y_pos = 20341775
     else:
         raise ValueError("Invalid target location {0}. Expecting [A B C][1 2 3] e.g. 'A1', 'C3', etc.".format(location))
-    print x_pos
-    print y_pos
+    # print x_pos
+    # print y_pos
 
     return [x_pos, y_pos]
 # end def
