@@ -1,5 +1,5 @@
 import sys
-from time import sleep
+from time import sleep, strftime
 from gevent import socket, Timeout
 
 
@@ -39,7 +39,7 @@ def runRecipe(infile):
     #     if not __dict__:
     #         raise SyntaxError('stretcher.py has no attribute {0}.'.format(line))
     for line in lines:
-        print line
+        print strftime('%H:%M:%S ') + line
         exec(line)
     file.close()
     return
@@ -71,7 +71,7 @@ def moveDipDraw(location, dwell_s, draw_speed, dip_speed=500, cycles=1):
     moveToPosition(location, dip=False)
 
     while cycles_left > 0:
-        print "cycle {0} out of {1}.".format(cycles-cycles_left+1, cycles)
+        print strftime('%H:%M:%S ') + "cycle {0} out of {1}.".format(cycles-cycles_left+1, cycles)
 
         # III.
         retractZ("DOWN", speed=dip_speed)
