@@ -1,0 +1,19 @@
+# sample recipe
+
+# location {string}: location in [ABC][1234] format
+# dwell_s {float}: seconds to dwell in lowered position
+# draw_speed {float}: z-axis raising speed in mm/s
+# dip_speed {float}: z-axis lowering speed in mm/s (defaults to 500)
+
+#moveDipDraw(location="A1", dwell_s=60, draw_speed=.3, dip_speed=500)
+#dwell(60)
+runRecipe("stretching_recipeCVI_12122013.txt")
+# moveDipDraw(location="A2", dwell_s=60, draw_speed=10, dip_speed=10, cycles=1)
+
+#moveDipDraw(location="A3", dwell_s=300, draw_speed=500, dip_speed=500)
+
+moveDipDraw(location="B1", dwell_s=300, draw_speed=500, dip_speed=500, cycles=1)
+
+moveDipDraw(location="A2", dwell_s=60, draw_speed=10, dip_speed=10, cycles=1)
+
+moveToLoadPosition()
