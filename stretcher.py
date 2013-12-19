@@ -39,7 +39,8 @@ def runRecipe(infile):
     #     if not __dict__:
     #         raise SyntaxError('stretcher.py has no attribute {0}.'.format(line))
     for line in lines:
-        print strftime('%H:%M:%S ') + line
+        if line[0] != "#":
+            print strftime('%H:%M:%S ') + line
         exec(line)
     file.close()
     return
