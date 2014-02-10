@@ -4,8 +4,8 @@ from gevent import socket, Timeout
 
 
 params = {"X":
-              {"LEFT": 1586321,
-               "RIGHT":32250525},
+              {"LEFT": 1070929532,
+               "RIGHT":1041503488},
           "Y":
               {"FRONT":1424258,
                "BACK": 32098423},
@@ -122,8 +122,10 @@ def retractZ(position="UP", speed=500):
 
 def moveToPosition(location, dip=True):
     """I. Retract Z axis
-    II. Move XY axes to [123][ABC] location.
+    II. Move XY axes to [ABC][1234] location.
     III. Lower Z axis."""
+
+    location = location.capitalize()
 
     retractZ()
 
@@ -239,15 +241,15 @@ def sendCommand(message, address, sock=None):
 def locationInCounts(location):
     # X location
     if location[1] == "1":
-        x_pos = 32250525 #31317211
+        x_pos = 1041503488
     elif location[1] == "2":
-        x_pos = 22545595 #21293790
+        x_pos = 1051227515
     elif location[1] == "3":
-        x_pos = 12556976 #11489822
+        x_pos = 1061057468
     elif location[1] == "4":
-        x_pos = 2697559 #1670066
+        x_pos = 1070929532
     else:
-        raise ValueError("Invalid target location {0}. Expecting [A B C][1 2 3] e.g. 'A1', 'C3', etc.".format(location))
+        raise ValueError("Invalid target location {0}. Expecting [A B C][1 2 3 4] e.g. 'A1', 'C3', etc.".format(location))
 
     # Y location
     if location[0] == "A":
@@ -257,7 +259,7 @@ def locationInCounts(location):
     elif location[0] == "C":
         y_pos = 20086789 #20341775
     else:
-        raise ValueError("Invalid target location {0}. Expecting [A B C][1 2 3] e.g. 'A1', 'C3', etc.".format(location))
+        raise ValueError("Invalid target location {0}. Expecting [A B C][1 2 3 4] e.g. 'A1', 'C3', etc.".format(location))
     # print x_pos
     # print y_pos
 
