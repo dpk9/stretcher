@@ -12,6 +12,7 @@ params = {"X":
           "Z":
               {"UP":   -5640977,
                "DOWN": -1000,
+               "CLEARANCE":-3898883,
                "COUNTperMM":200000}
                # "COUNTperMM":171265}
          }
@@ -27,6 +28,11 @@ def axisAddress(axis):
     else: 
         raise ValueError("Invalid axis {0}. Expecting X, Y, or Z.".format(axis))
     return address
+# end def
+
+def openSocket():
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, 0)
+    return sock
 # end def
 
 def runRecipe(infile):
@@ -66,7 +72,7 @@ def moveDipDraw(location, dwell_s, draw_speed, dip_speed=500, cycles=1):
     cycles_left = cycles
 
     # I.
-    retractZ()
+    retractZ("CLEARANCE")
 
     # II.
     moveToPosition(location, dip=False)
@@ -81,7 +87,7 @@ def moveDipDraw(location, dwell_s, draw_speed, dip_speed=500, cycles=1):
         dwell(dwell_s)
 
         # V.
-        retractZ("UP", speed=draw_speed)
+        retractZ("CLEARANCE", speed=draw_speed)
 
         cycles_left -= 1
 
@@ -99,17 +105,17 @@ def retractZ(position="UP", speed=500):
     address = axisAddress("Z")
 
     position = position.upper()
-    if position == "UP" or position == "DOWN":
+    if position in ["UP", "DOWN", "CLEARANCE"]:
         count_location = params["Z"][position]
     else:
-        raise ValueError("Invalid position {0}. Expected 'UP' or 'DOWN'".format(position))
+        raise ValueError("Invalid position {0}. Expected 'UP' 'DOWN' or 'CLEARANCE".format(position))
 
     sp = int(speed*params["Z"]["COUNTperMM"])
     # print "SP = {0}".format(sp)
 
     messages = ["sp={0};".format(sp), "mo=1;", "pa={0};".format(count_location), "bg;"]
 
-    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, 0)
+    sock = openSocket()
 
     for message in messages:
         sendCommand(message, address, sock)
@@ -127,13 +133,13 @@ def moveToPosition(location, dip=True):
 
     location = location.capitalize()
 
-    retractZ()
+    retractZ("CLEARANCE")
 
 
     axes = ["X", "Y"]
     count_location = locationInCounts(location)
 
-    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, 0)
+    sock = openSocket()
     i = 0
     for axis in axes:
         address = axisAddress(axis)
@@ -164,7 +170,7 @@ def moveToLoadPosition():
     load_pos = params["Y"]["BACK"]
     messages = ["mo=1;", "pa={0};".format(load_pos), "bg;"]
 
-    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, 0)
+    sock = openSocket()
 
     for message in messages:
         data = sendCommand(message, address, sock)
@@ -199,7 +205,7 @@ def isMotorMoving(address, sock):
 def sendCommand(message, address, sock=None):
     """Send a command to an axis."""
     if sock == None:
-        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, 0)
+        sock = openSocket()
         close_socket = True
     else:
         close_socket = False
@@ -268,7 +274,7 @@ def locationInCounts(location):
 
 def unlock(axes):
     axes = axes.upper()
-    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, 0)
+    sock = openSocket()
     for axis in axes:
         message = "mo=0;"
         address = axisAddress(axis)
@@ -279,13 +285,42 @@ def unlock(axes):
 
 def lock(axes):
     axes = axes.upper()
-    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, 0)
+    sock = openSocket()
     for axis in axes:
         message = "mo=1;"
         address = axisAddress(axis)
         sendCommand(message, address, sock)
     sock.close()
     return
+# end def
+
+def uvTimer(time_s):
+    try:
+        time_s = float(time_s)
+    except:
+        raise ValueError("time_s should be a number (float or int) in seconds. Received '{}'".format(time_s))
+    uvSwitch(True)
+    sleep(time_s)
+    uvSwitch(False)
+# end def
+
+def uvSwitch(on=False):
+    """
+on (bool) = bool
+    True closes circuit (UV light on)
+    False opens circuit (UV light off)
+    """
+    if type(on) == bool:
+        lightswitch = 1 if on == False else 0
+        sock = openSocket()
+        message = "ob[2]={};".format(lightswitch)
+        print message
+        address = axisAddress("X")
+        print address
+        sendCommand(message, address, sock)
+        sock.close()
+    else:
+        raise ValueError("Invalid 'on' value recieved: {}. Should be 'True' (on) or 'False' (off)".format(on))
 # end def
 
 if __name__ == "__main__":

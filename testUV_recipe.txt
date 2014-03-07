@@ -1,0 +1,15 @@
+# sample recipe
+
+# location {string}: location in [ABC][1234] format
+# dwell_s {float}: seconds to dwell in lowered position
+# draw_speed {float}: z-axis raising speed in mm/s
+# dip_speed {float}: z-axis lowering speed in mm/s (defaults to 500)
+
+moveDipDraw(location="A1", dwell_s=2, draw_speed=1, dip_speed=500)
+moveDipDraw(location="b3", dwell_s=0, draw_speed=10, dip_speed=10, cycles=2)
+
+moveDipDraw(location="C2", dwell_s=6, draw_speed=10, dip_speed=10)
+
+moveToPosition("C4")
+uvTimer(20)
+moveToLoadPosition()
