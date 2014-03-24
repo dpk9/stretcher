@@ -4,23 +4,52 @@ from gevent import socket, Timeout
 
 
 params = {"X":
-              {"LEFT": 1070929532,
-               "RIGHT":1041503488},
+              {"LEFT": 1521237,
+               "RIGHT":32230112},
           "Y":
               {"FRONT":1424258,
                "BACK": 32098423},
           "Z":
               {"UP":   -5640977,
-               "DOWN": -1000,
+               "DOWN": -4000,
                "CLEARANCE":-3898883,
                "COUNTperMM":200000}
                # "COUNTperMM":171265}
          }
 
+def locationInCounts(location):
+    # X location
+    if location[1] == "1":
+        x_pos = 32230111
+    elif location[1] == "2":
+        x_pos = 22552672
+    elif location[1] == "3":
+        x_pos = 12766294
+    elif location[1] == "4":
+        x_pos = 2828094
+    else:
+        raise ValueError("Invalid target location {0}. Expecting [A B C][1 2 3 4] e.g. 'A1', 'C3', etc.".format(location))
+
+    # Y location
+    if location[0] == "A":
+        y_pos = 10721281 #10884550
+    elif location[0] == "B":
+        y_pos = 15360943 #15607662
+    elif location[0] == "C":
+        y_pos = 20086789 #20341775
+    else:
+        raise ValueError("Invalid target location {0}. Expecting [A B C][1 2 3 4] e.g. 'A1', 'C3', etc.".format(location))
+    # print x_pos
+    # print y_pos
+
+    return [x_pos, y_pos]
+# end def
+
+
 def axisAddress(axis):
     """Return the address of requested axis."""
     if axis == "X": 
-        address = ('192.168.1.151', 5001)
+        address = ('192.168.1.152', 5001)
     elif axis == "Y": 
         address = ('192.168.1.153', 5001)
     elif axis == "Z": 
@@ -243,34 +272,6 @@ def sendCommand(message, address, sock=None):
     return data
 # end def
 
-
-def locationInCounts(location):
-    # X location
-    if location[1] == "1":
-        x_pos = 1041503488
-    elif location[1] == "2":
-        x_pos = 1051227515
-    elif location[1] == "3":
-        x_pos = 1061057468
-    elif location[1] == "4":
-        x_pos = 1070929532
-    else:
-        raise ValueError("Invalid target location {0}. Expecting [A B C][1 2 3 4] e.g. 'A1', 'C3', etc.".format(location))
-
-    # Y location
-    if location[0] == "A":
-        y_pos = 10721281 #10884550
-    elif location[0] == "B":
-        y_pos = 15360943 #15607662
-    elif location[0] == "C":
-        y_pos = 20086789 #20341775
-    else:
-        raise ValueError("Invalid target location {0}. Expecting [A B C][1 2 3 4] e.g. 'A1', 'C3', etc.".format(location))
-    # print x_pos
-    # print y_pos
-
-    return [x_pos, y_pos]
-# end def
 
 def unlock(axes):
     axes = axes.upper()

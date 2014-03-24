@@ -8,7 +8,7 @@ import sys
 from gevent import socket, Timeout
 
 if sys.argv[1] == 'x':
-    address = ('192.168.1.151', 5001)
+    address = ('192.168.1.152', 5001)
 elif sys.argv[1] == 'y':
     address = ('192.168.1.153', 5001)
 elif sys.argv[1] == 'z':
